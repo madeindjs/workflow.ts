@@ -36,7 +36,7 @@ Then Install somes dependencies
 
 ~~~bash
 $ npm install --save express body-parser
-$ npm install --save-dev typescript ts-node @types/express
+$ npm install --save-dev typescript ts-node @types/express @types/node
 ~~~
 
 And now you need to create a `tsconfig.json` to indicate how transcript TypeScript files:
@@ -60,5 +60,91 @@ And now you need to create a `tsconfig.json` to indicate how transcript TypeScri
         "node_modules"
     ]
 }
+~~~
+
+Nos we we'll create the the `lib/app.ts`
+
+~~~typescript
+// lib/app.ts
+import * as express from "express";
+import * as bodyParser from "body-parser";
+import { Routes } from "./config/routes";
+
+class App {
+
+    public app: express.Application;
+    public routePrv: Routes = new Routes();
+
+    constructor() {
+        this.app = express();
+        this.config();
+        this.routePrv.routes(this.app);
+    }
+
+    private config(): void{
+        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.urlencoded({ extended: false }));
+    }
+}
+
+export default new App().app;
+~~~
+
+As you may notice, we need to defines controller and routes to respect MVC patern:
+
+~~~typescript
+// lib/controllers/nodes.controller.ts
+import { Request, Response } from 'express';
+
+
+export class NodesController{
+
+    public index (req: Request, res: Response) {
+        res.json({
+            "message": "Hello boi"
+        })
+    }
+}
+~~~
+
+~~~typescript
+// lib/config/routes.ts
+import { Request, Response } from "express";
+import { NodesController } from "../controllers/nodes.controller";
+
+export class Routes {
+    public productsController: NodesController = new NodesController();
+
+    public routes(app): void {
+        app.route('/')
+        .get((req: Request, res: Response) => {
+            res.status(200).send({
+                message: 'Welcome to Workflow.ts'
+            })
+        })
+
+        app.route('/nodes')
+        .get(this.productsController.index)
+    }
+}
+~~~
+
+And a `lib/server.ts` file to start `App` object:
+
+~~~typescript
+// lib/server.ts
+import app from "./app";
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () =>
+    console.log(`Example app listening on port ${PORT}!`),
+);
+~~~
+
+And that's it. You can start server using `npm run dev` and try API using cURL:
+
+~~~bash
+$ curl http://localhost:3000/nodes
+{"message":"Hello boi"}
 ~~~
 
