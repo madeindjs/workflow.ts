@@ -1,6 +1,7 @@
 // lib/controllers/nodes.controller.ts
 // import User from '../models/user.model';
 import { Request, Response } from 'express';
+import {Node} from '../models/node.model'
 
 
 export class NodesController{
@@ -17,9 +18,10 @@ export class NodesController{
     // }
 
     public index (req: Request, res: Response) {
-        res.json({
-            "message": "Hello boi"
-        })
+        
+        const nodes = Node.findAll<Node>({});
+
+        res.json(nodes)
         // User.find({}, (err: Error, Users) => {
         //     if(err){
         //         res.send(err);

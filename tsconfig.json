@@ -6,7 +6,9 @@
         "sourceMap": true,
         "target": "es6",
         "outDir": "./dist",
-        "baseUrl": "./lib"
+        "baseUrl": "./lib",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     },
     "include": [
         "lib/**/*.ts"
