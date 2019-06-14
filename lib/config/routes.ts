@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { NodesController } from "../controllers/nodes.controller";
 
 export class Routes {
-    public productsController: NodesController = new NodesController();
+    public nodesController: NodesController = new NodesController();
 
     public routes(app): void {
         app.route('/')
@@ -14,7 +14,12 @@ export class Routes {
         })
 
         app.route('/nodes')
-           .get(this.productsController.index)
-           .post(this.productsController.create)
+           .get(this.nodesController.index)
+           .post(this.nodesController.create)
+
+        app.route('/nodes/:id')
+           .get(this.nodesController.show)
+        //    .put(this.nodesController.update)
+        //    .delete(this.nodesController.delete)
     }
 }

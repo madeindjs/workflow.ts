@@ -113,7 +113,7 @@ import { Request, Response } from "express";
 import { NodesController } from "../controllers/nodes.controller";
 
 export class Routes {
-    public productsController: NodesController = new NodesController();
+    public nodesController: NodesController = new NodesController();
 
     public routes(app): void {
         app.route('/')
@@ -124,7 +124,7 @@ export class Routes {
         })
 
         app.route('/nodes')
-        .get(this.productsController.index)
+        .get(this.nodesController.index)
     }
 }
 ~~~
@@ -237,12 +237,12 @@ import { Request, Response } from "express";
 import { NodesController } from "../controllers/nodes.controller";
 
 export class Routes {
-    public productsController: NodesController = new NodesController();
+    public nodesController: NodesController = new NodesController();
 
     public routes(app): void {
         // ...
         app.route('/nodes')
-           .get(this.productsController.index)
+           .get(this.nodesController.index)
     }
 }
 ~~~
@@ -262,7 +262,6 @@ We'll first define an **interface** wich define properties we should receive fro
 
 ~~~ts
 // lib/models/node.model.ts
-
 // ...
 
 export interface NewNode {
@@ -279,14 +278,13 @@ import { Request, Response } from 'express';
 import { Node, NewNode } from '../models/node.model'
 
 export class NodesController{
-
     // ...
 
     public create (req: Request, res: Response) {
         const params : NewNode = req.body
 
         Node.create<Node>(params)
-            .then((node : Node) => res.json(node))
+            .then((node : Node) => res.status(201).json(node))
             .catch((err : Error) => res.status(500).json(err))
     }
 }
@@ -296,17 +294,16 @@ And setup route:
 
 ~~~ts
 // lib/config/routes.ts
-import { Request, Response } from "express";
-import { NodesController } from "../controllers/nodes.controller";
+// ...
 
 export class Routes {
-    public productsController: NodesController = new NodesController();
+    // ...
 
     public routes(app): void {
         // ...
         app.route('/nodes')
-           .get(this.productsController.index)
-           .post(this.productsController.create)
+           .get(this.nodesController.index)
+           .post(this.nodesController.create)
     }
 }
 ~~~
@@ -328,3 +325,59 @@ $ curl -X POST http://localhost:3000/nodes/
 ~~~json
 {"name":"SequelizeValidationError","errors":[{"message":"Node.name cannot be null","type":"notNull Violation",...]}
 ~~~
+
+### Show
+
+~~~ts
+// lib/controllers/nodes.controller.ts
+// ...
+export class NodesController{
+    // ...
+    public show (req: Request, res: Response) {
+        const nodeId : number = req.params.id
+
+        Node.findByPk<Node>(nodeId)
+            .then((node : Node|null) => {
+                if (node) {
+                    res.json(node)
+                } else {
+                    res.status(404).json({errors: ['Node not found']})
+                }
+            })
+            .catch((err : Error) => res.status(500).json(err))
+    }
+}
+
+~~~
+
+And setup route:
+
+~~~ts
+// lib/config/routes.ts
+// ...
+export class Routes {
+    // ...
+    public routes(app): void {
+        // ...
+        app.route('/nodes/:id')
+           .get(this.nodesController.show)
+    }
+}
+~~~
+
+Let's try it:
+
+~~~bash
+$ curl -X POST http://localhost:3000/nodes/1
+~~~
+~~~json
+{"id":1,"name":"first","createdAt":"2019-06-14T11:32:47.731Z","updatedAt":"2019-06-14T11:32:47.731Z"}
+~~~
+~~~bash
+$ curl -X POST http://localhost:3000/nodes/99
+~~~
+~~~json
+{"errors":["Node not found"]}
+~~~
+
+### Update

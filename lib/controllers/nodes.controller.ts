@@ -16,18 +16,23 @@ export class NodesController{
         const params : NewNode = req.body
 
         Node.create<Node>(params)
-            .then((node : Node) => res.json(node))
+            .then((node : Node) => res.status(201).json(node))
             .catch((err : Error) => res.status(500).json(err))
     }
 
-    // public show (req: Request, res: Response) {
-    //     User.findById(req.params.id, (err: Error, Users) => {
-    //         if(err){
-    //             res.send(err);
-    //         }
-    //         res.json(Users);
-    //     });
-    // }
+    public show (req: Request, res: Response) {
+        const nodeId : number = req.params.id
+
+        Node.findByPk<Node>(nodeId)
+            .then((node : Node|null) => {
+                if (node) {
+                    res.json(node)
+                } else {
+                    res.status(404).json({errors: ['Node not found']})
+                }
+            })
+            .catch((err : Error) => res.status(500).json(err))
+    }
 
     // public update (req: Request, res: Response) {
     //     User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }, (err, User) => {
