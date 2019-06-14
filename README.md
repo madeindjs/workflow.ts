@@ -131,7 +131,7 @@ export class Routes {
 
 And a `lib/server.ts` file to start `App` object:
 
-~~~typescript
+~~~ts
 // lib/server.ts
 import app from "./app";
 const PORT = process.env.PORT || 3000;
@@ -153,20 +153,63 @@ $ curl http://localhost:3000/nodes
 The [sequelize documentation about TypeScrypt](http://docs.sequelizejs.com/manual/typescript) is really complete but there a quick review:
 
 ~~~bash
-$ npm install --save  sqlite
-$ npm install --save-dev @types/bluebird @types/validator
+$ npm install --save sequelize sqlite
+$ npm install --save-dev @types/bluebird @types/validator @types/sequelize
 ~~~
 
-This will create two files:
+Then we will create a _lib/config/database.ts_ file to setup Sequelize databse system. For suimplicity, I create a Sqlite databse in memory:
 
-Created "config/config.json"
-Successfully created models folder at "/home/lorendre/github/madeindjs/workflow.ts/models".
-Successfully created migrations folder at "/home/lorendre/github/madeindjs/workflow.ts/migrations".
-Successfully created seeders folder at "/home/lorendre/github/madeindjs/workflow.ts/seeders".
+~~~ts
+// lib/config/database.ts
+import {Sequelize} from 'sequelize';
 
-> Sequelize is a promise-based Node.js ORM for Postgres, MySQL, MariaDB, SQLite and Microsoft SQL Server. It features solid transaction support, relations, eager and lazy loading, read replication and more.
-
-~~~bash
-$ npm install --save sequelize
-$ npm install --save-dev @types/sequelize
+export const database = new Sequelize({
+    database: 'some_db',
+    dialect: 'sqlite',
+    username: 'root',
+    password: '',
+    storage: ':memory:',
+});
 ~~~
+
+Then we'll be able to create a **model**. We'll begin with **Node** model:
+
+~~~ts
+// lib/models/node.model.ts
+import { Sequelize, Model, DataTypes, BuildOptions } from 'sequelize';
+import { database } from '../config/database';
+
+export class Node extends Model {
+    public id!: number; // Note that the `null assertion` `!` is required in strict mode.
+    public name!: string;
+    // timestamps!
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
+}
+
+Node.init(
+    {
+        id: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+        name: {
+            type: new DataTypes.STRING(128),
+            allowNull: false,
+        },
+    },
+    {
+        tableName: 'users',
+        sequelize: database, // this bit is important
+    }
+);
+
+Node.sync({force: true}).then(() => console.log("Node table created"))
+~~~
+
+We simply extends `Model` class to create ou `Node` model. Then we setup the table SQL schema and call `Node.sync` to create table in Sqlite database.
+
+## Use Sequelize model
+
+
