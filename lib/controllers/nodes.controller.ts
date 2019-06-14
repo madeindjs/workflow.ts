@@ -1,14 +1,14 @@
 // lib/controllers/nodes.controller.ts
 // import User from '../models/user.model';
 import { Request, Response } from 'express';
-import {Node} from '../models/node.model'
+import { Node } from '../models/node.model'
 
 
 export class NodesController{
 
     // public create (req: Request, res: Response) {
     //     let newUser = new User(req.body);
-        
+
     //     newUser.save((err: Error, UserSaved) => {
     //         if (err) {
     //             res.send(err)
@@ -18,10 +18,14 @@ export class NodesController{
     // }
 
     public index (req: Request, res: Response) {
-        
-        const nodes = Node.findAll<Node>({});
 
-        res.json(nodes)
+        Node.findAll<Node>({})
+            .then((nodes : Array<Node>) => {
+                res.json(nodes)
+            }).catch((err : Error) => {
+                res.status(500).json(err)
+            });
+
         // User.find({}, (err: Error, Users) => {
         //     if(err){
         //         res.send(err);

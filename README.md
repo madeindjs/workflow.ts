@@ -212,4 +212,41 @@ We simply extends `Model` class to create ou `Node` model. Then we setup the tab
 
 ## Use Sequelize model
 
+### Index
+
+~~~ts
+// lib/controllers/nodes.controller.ts
+import { Request, Response } from 'express';
+import { Node } from '../models/node.model'
+
+export class NodesController{
+
+    public index (req: Request, res: Response) {
+        Node.findAll<Node>({})
+            .then((nodes : Array<Node>) => {
+                res.json(nodes)
+            }).catch((err : Error) => {
+                res.status(500).json(err)
+            });
+    }
+}
+~~~
+
+And setup route:
+
+~~~ts
+// lib/config/routes.ts
+import { Request, Response } from "express";
+import { NodesController } from "../controllers/nodes.controller";
+
+export class Routes {
+    public productsController: NodesController = new NodesController();
+
+    public routes(app): void {
+        // ...
+        app.route('/nodes')
+           .get(this.productsController.index)
+    }
+}
+~~~
 
