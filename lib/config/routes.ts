@@ -19,7 +19,7 @@ export class Routes {
 
         app.route('/nodes/:id')
            .get(this.nodesController.show)
-        //    .put(this.nodesController.update)
-        //    .delete(this.nodesController.delete)
+           .put(this.nodesController.update)
+           .delete(this.nodesController.delete)
     }
 }

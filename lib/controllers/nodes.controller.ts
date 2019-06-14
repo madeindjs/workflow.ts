@@ -1,7 +1,8 @@
 // lib/controllers/nodes.controller.ts
 // import User from '../models/user.model';
 import { Request, Response } from 'express';
-import { Node, NewNode } from '../models/node.model'
+import { Node, NodeInterface } from '../models/node.model'
+import { UpdateOptions, DestroyOptions } from 'sequelize'
 
 
 export class NodesController{
@@ -13,7 +14,7 @@ export class NodesController{
     }
 
     public create (req: Request, res: Response) {
-        const params : NewNode = req.body
+        const params : NodeInterface = req.body
 
         Node.create<Node>(params)
             .then((node : Node) => res.status(201).json(node))
@@ -34,21 +35,29 @@ export class NodesController{
             .catch((err : Error) => res.status(500).json(err))
     }
 
-    // public update (req: Request, res: Response) {
-    //     User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }, (err, User) => {
-    //         if(err){
-    //             res.send(err);
-    //         }
-    //         res.json(User);
-    //     });
-    // }
+    public update (req: Request, res: Response) {
+        const nodeId : number = req.params.id
+        const params : NodeInterface = req.body
 
-    // public delete (req: Request, res: Response) {
-    //     User.remove({ _id: req.params.id }, (err: Error, User) => {
-    //         if(err){
-    //             res.send(err);
-    //         }
-    //         res.json({ message: 'Successfully deleted User!'});
-    //     });
-    // }
+        const options : UpdateOptions = {
+             where: {id: nodeId},
+             limit: 1
+        }
+
+        Node.update(params, options)
+            .then(() => res.status(202).json({data: "success"}))
+            .catch((err : Error) => res.status(500).json(err))
+    }
+
+    public delete (req: Request, res: Response) {
+        const nodeId : number = req.params.id
+        const options : DestroyOptions = {
+            where: {id: nodeId},
+            limit: 1
+       }
+
+        Node.destroy(options)
+            .then(() => res.status(204).json({data: "success"}))
+            .catch((err : Error) => res.status(500).json(err))
+    }
 }

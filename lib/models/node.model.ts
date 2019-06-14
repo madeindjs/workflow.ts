@@ -1,5 +1,5 @@
 // lib/models/node.model.ts
-import { Sequelize, Model, DataTypes, BuildOptions } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import { database } from '../config/database';
 
 export class Node extends Model {
@@ -10,7 +10,7 @@ export class Node extends Model {
     public readonly updatedAt!: Date;
 }
 
-export interface NewNode {
+export interface NodeInterface {
     name: string
 }
 

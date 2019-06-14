@@ -264,7 +264,7 @@ We'll first define an **interface** wich define properties we should receive fro
 // lib/models/node.model.ts
 // ...
 
-export interface NewNode {
+export interface NodeInterface {
     name: string
 }
 ~~~
@@ -275,13 +275,13 @@ It's simple like that. Then we'll create
 ~~~ts
 // lib/controllers/nodes.controller.ts
 import { Request, Response } from 'express';
-import { Node, NewNode } from '../models/node.model'
+import { Node, NodeInterface } from '../models/node.model'
 
 export class NodesController{
     // ...
 
     public create (req: Request, res: Response) {
-        const params : NewNode = req.body
+        const params : NodeInterface = req.body
 
         Node.create<Node>(params)
             .then((node : Node) => res.status(201).json(node))
@@ -347,7 +347,6 @@ export class NodesController{
             .catch((err : Error) => res.status(500).json(err))
     }
 }
-
 ~~~
 
 And setup route:
@@ -381,3 +380,104 @@ $ curl -X POST http://localhost:3000/nodes/99
 ~~~
 
 ### Update
+
+~~~ts
+// lib/controllers/nodes.controller.ts
+import { UpdateOptions } from 'sequelize'
+// ...
+
+export class NodesController{
+
+    // ...
+
+    public update (req: Request, res: Response) {
+        const nodeId : number = req.params.id
+        const params : NodeInterface = req.body
+
+        const update : UpdateOptions = {
+             where: {id: nodeId},
+             limit: 1
+        }
+
+        Node.update(params, update)
+            .then(() => res.status(202).json({data: 'success'}))
+            .catch((err : Error) => res.status(500).json(err))
+    }
+}
+~~~
+
+And setup route:
+
+~~~ts
+// lib/config/routes.ts
+// ...
+export class Routes {
+    // ...
+    public routes(app): void {
+        // ...
+        app.route('/nodes/:id')
+           .get(this.nodesController.show)
+           .put(this.nodesController.update)
+    }
+}
+~~~
+
+Let's try it:
+
+~~~bash
+$ curl -X PUT --data "name=updated" http://localhost:3000/nodes/1
+~~~
+~~~json
+{"data":"success"}}
+~~~
+
+### Destroy
+
+
+~~~ts
+// lib/controllers/nodes.controller.ts
+// ...
+import { UpdateOptions, DestroyOptions } from 'sequelize'
+
+
+export class NodesController{
+
+    // ...
+
+    public delete (req: Request, res: Response) {
+        const nodeId : number = req.params.id
+        const options : DestroyOptions = {
+            where: {id: nodeId},
+            limit: 1
+       }
+
+        Node.destroy(options)
+            .then(() => res.status(204).json({data: "success"}))
+            .catch((err : Error) => res.status(500).json(err))
+    }
+}
+~~~
+
+
+And setup route:
+
+~~~ts
+// lib/config/routes.ts
+// ...
+export class Routes {
+    // ...
+    public routes(app): void {
+        // ...
+        app.route('/nodes/:id')
+           .get(this.nodesController.show)
+           .put(this.nodesController.update)
+           .delete(this.nodesController.delete)
+    }
+}
+~~~
+
+Let's try it:
+
+~~~bash
+$ curl -X DELETE  http://localhost:3000/nodes/1
+~~~
