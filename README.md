@@ -223,11 +223,8 @@ export class NodesController{
 
     public index (req: Request, res: Response) {
         Node.findAll<Node>({})
-            .then((nodes : Array<Node>) => {
-                res.json(nodes)
-            }).catch((err : Error) => {
-                res.status(500).json(err)
-            });
+            .then((nodes : Array<Node>) => res.json(nodes))
+            .catch((err : Error) => res.status(500).json(err))
     }
 }
 ~~~
@@ -250,3 +247,84 @@ export class Routes {
 }
 ~~~
 
+You can try the route using cURL:
+
+~~~bash
+$ curl http://localhost:3000/nodes/
+[]
+~~~
+
+It's seem to work but we have not data in SQlite database yet. Let's continue to add them.
+
+### Create
+
+We'll first define an **interface** wich define properties we should receive from POST query. We only want to receive `name` property as `String`.
+
+~~~ts
+// lib/models/node.model.ts
+
+// ...
+
+export interface NewNode {
+    name: string
+}
+~~~
+
+It's simple like that. Then we'll create
+
+
+~~~ts
+// lib/controllers/nodes.controller.ts
+import { Request, Response } from 'express';
+import { Node, NewNode } from '../models/node.model'
+
+export class NodesController{
+
+    // ...
+
+    public create (req: Request, res: Response) {
+        const params : NewNode = req.body
+
+        Node.create<Node>(params)
+            .then((node : Node) => res.json(node))
+            .catch((err : Error) => res.status(500).json(err))
+    }
+}
+~~~
+
+And setup route:
+
+~~~ts
+// lib/config/routes.ts
+import { Request, Response } from "express";
+import { NodesController } from "../controllers/nodes.controller";
+
+export class Routes {
+    public productsController: NodesController = new NodesController();
+
+    public routes(app): void {
+        // ...
+        app.route('/nodes')
+           .get(this.productsController.index)
+           .post(this.productsController.create)
+    }
+}
+~~~
+
+You can try the route using cURL:
+
+~~~bash
+$ curl -X POST --data "name=first" http://localhost:3000/nodes/
+~~~
+~~~json
+{"id":2,"name":"first","updatedAt":"2019-06-14T11:12:17.606Z","createdAt":"2019-06-14T11:12:17.606Z"}
+~~~
+
+It's seem work. Let's try with a bad request:
+
+~~~bash
+$ curl -X POST http://localhost:3000/nodes/
+~~~
+~~~json
+{"name":"SequelizeValidationError","errors":[{"message":"Node.name cannot be null","type":"notNull Violation",...]}
+~~~

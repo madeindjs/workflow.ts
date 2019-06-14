@@ -14,6 +14,7 @@ export class Routes {
         })
 
         app.route('/nodes')
-        .get(this.productsController.index)
+           .get(this.productsController.index)
+           .post(this.productsController.create)
     }
 }

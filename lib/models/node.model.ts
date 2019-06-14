@@ -10,6 +10,10 @@ export class Node extends Model {
     public readonly updatedAt!: Date;
 }
 
+export interface NewNode {
+    name: string
+}
+
 Node.init(
     {
         id: {

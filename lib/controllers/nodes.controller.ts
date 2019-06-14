@@ -1,37 +1,23 @@
 // lib/controllers/nodes.controller.ts
 // import User from '../models/user.model';
 import { Request, Response } from 'express';
-import { Node } from '../models/node.model'
+import { Node, NewNode } from '../models/node.model'
 
 
 export class NodesController{
 
-    // public create (req: Request, res: Response) {
-    //     let newUser = new User(req.body);
-
-    //     newUser.save((err: Error, UserSaved) => {
-    //         if (err) {
-    //             res.send(err)
-    //         }
-    //         res.json(UserSaved)
-    //     })
-    // }
-
-    public index (req: Request, res: Response) {
-
+    public index (_req: Request, res: Response) {
         Node.findAll<Node>({})
-            .then((nodes : Array<Node>) => {
-                res.json(nodes)
-            }).catch((err : Error) => {
-                res.status(500).json(err)
-            });
+            .then((nodes : Array<Node>) => res.json(nodes))
+            .catch((err : Error) => res.status(500).json(err))
+    }
 
-        // User.find({}, (err: Error, Users) => {
-        //     if(err){
-        //         res.send(err);
-        //     }
-        //     res.json(Users);
-        // });
+    public create (req: Request, res: Response) {
+        const params : NewNode = req.body
+
+        Node.create<Node>(params)
+            .then((node : Node) => res.json(node))
+            .catch((err : Error) => res.status(500).json(err))
     }
 
     // public show (req: Request, res: Response) {
