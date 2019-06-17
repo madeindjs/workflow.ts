@@ -62,56 +62,56 @@ Nos we we'll create the the `lib/app.ts`. This will be in charge to configure, l
 
 ```typescript
 // lib/app.ts
-import * as express from "express";
-import * as bodyParser from "body-parser";
-import { Routes } from "./config/routes";
+import * as express from "express"
+import * as bodyParser from "body-parser"
+import { Routes } from "./config/routes"
 
 class App {
-  public app: express.Application;
-  public routePrv: Routes = new Routes();
+  public app: express.Application
+  public routePrv: Routes = new Routes()
 
   constructor() {
-    this.app = express();
-    this.config();
-    this.routePrv.routes(this.app);
+    this.app = express()
+    this.config()
+    this.routePrv.routes(this.app)
   }
 
   private config(): void {
-    this.app.use(bodyParser.json());
-    this.app.use(bodyParser.urlencoded({ extended: false }));
+    this.app.use(bodyParser.json())
+    this.app.use(bodyParser.urlencoded({ extended: false }))
   }
 }
 
-export default new App().app;
+export default new App().app
 ```
 
 As you may notice, we load routes to defines controllers and routes to respect MVC patern:
 
 ```typescript
 // lib/controllers/nodes.controller.ts
-import { Request, Response } from "express";
+import { Request, Response } from "express"
 
 export class NodesController {
   public index(req: Request, res: Response) {
     res.json({
       message: "Hello boi"
-    });
+    })
   }
 }
 ```
 
 ```typescript
 // lib/config/routes.ts
-import { Request, Response } from "express";
-import { NodesController } from "../controllers/nodes.controller";
+import { Request, Response } from "express"
+import { NodesController } from "../controllers/nodes.controller"
 
 export class Routes {
-  public nodesController: NodesController = new NodesController();
+  public nodesController: NodesController = new NodesController()
 
   public routes(app): void {
-    app.route("/").get(this.nodesController.index);
+    app.route("/").get(this.nodesController.index)
 
-    app.route("/nodes").get(this.nodesController.index);
+    app.route("/nodes").get(this.nodesController.index)
   }
 }
 ```
@@ -120,10 +120,10 @@ And a `lib/server.ts` file to start `App` object:
 
 ```ts
 // lib/server.ts
-import app from "./app";
-const PORT = process.env.PORT || 3000;
+import app from "./app"
+const PORT = process.env.PORT || 3000
 
-app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));
+app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
 ```
 
 And that's it. You can start server using `npm run dev` and try API using cURL:
@@ -144,41 +144,39 @@ $ npm install --save sequelize sqlite
 $ npm install --save-dev @types/bluebird @types/validator @types/sequelize
 ```
 
-> You may notice I choose SQLite database but you can use MySQL or Postgres
+> You may notice I choose SQLite database because of simplicity but you can use MySQL or Postgres
 
 Then we will create a _lib/config/database.ts_ file to setup Sequelize databse system. For simplicity, I create a Sqlite database in memory:
 
 ```ts
 // lib/config/database.ts
-import { Sequelize } from "sequelize";
+import { Sequelize } from "sequelize"
 
 export const database = new Sequelize({
   database: "some_db",
   dialect: "sqlite",
-  username: "root",
-  password: "",
-  storage: ":memory:"
-});
+  storage: ":memory:",
+})
 ```
 
 Then we'll be able to create a **model**. We'll begin with **Node** model who extends Seqelize `Model` class:
 
 ```ts
 // lib/models/node.model.ts
-import { Sequelize, Model, DataTypes, BuildOptions } from "sequelize";
-import { database } from "../config/database";
+import { Sequelize, Model, DataTypes, BuildOptions } from "sequelize"
+import { database } from "../config/database"
 
 export class Node extends Model {
-  public id!: number; // Note that the `null assertion` `!` is required in strict mode.
-  public name!: string;
+  public id!: number // Note that the `null assertion` `!` is required in strict mode.
+  public name!: string
   // timestamps!
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  public readonly createdAt!: Date
+  public readonly updatedAt!: Date
 }
 // ...
 ```
 
-Then we setup the table SQL schema and call `Node.sync` to create table in Sqlite database.
+Then we setup the table SQL schema and call `Node.sync`. This will create table in Sqlite database.
 
 ```ts
 // lib/models/node.model.ts
@@ -199,14 +197,14 @@ Node.init(
     tableName: "users",
     sequelize: database // this bit is important
   }
-);
+)
 
-Node.sync({ force: true }).then(() => console.log("Node table created"));
+Node.sync({ force: true }).then(() => console.log("Node table created"))
 ```
 
-That it!
+That's it!
 
-## Use Sequelize model
+## Setup Node controller
 
 Now we setup database, let's create simple CRUD methods in controller. This means:
 
@@ -220,14 +218,14 @@ Now we setup database, let's create simple CRUD methods in controller. This mean
 
 ```ts
 // lib/controllers/nodes.controller.ts
-import { Request, Response } from "express";
-import { Node } from "../models/node.model";
+import { Request, Response } from "express"
+import { Node } from "../models/node.model"
 
 export class NodesController {
   public index(req: Request, res: Response) {
     Node.findAll<Node>({})
       .then((nodes: Array<Node>) => res.json(nodes))
-      .catch((err: Error) => res.status(500).json(err));
+      .catch((err: Error) => res.status(500).json(err))
   }
 }
 ```
@@ -236,15 +234,15 @@ And setup route:
 
 ```ts
 // lib/config/routes.ts
-import { Request, Response } from "express";
-import { NodesController } from "../controllers/nodes.controller";
+import { Request, Response } from "express"
+import { NodesController } from "../controllers/nodes.controller"
 
 export class Routes {
-  public nodesController: NodesController = new NodesController();
+  public nodesController: NodesController = new NodesController()
 
   public routes(app): void {
     // ...
-    app.route("/nodes").get(this.nodesController.index);
+    app.route("/nodes").get(this.nodesController.index)
   }
 }
 ```
@@ -266,7 +264,7 @@ We'll first define an **interface** wich define properties we should receive fro
 // lib/models/node.model.ts
 // ...
 export interface NodeInterface {
-  name: string;
+  name: string
 }
 ```
 
@@ -275,16 +273,16 @@ Now back in controller. We simply call `Node.create` and pass params from `req.b
 ```ts
 // lib/controllers/nodes.controller.ts
 // ...
-import { Node, NodeInterface } from "../models/node.model";
+import { Node, NodeInterface } from "../models/node.model"
 
 export class NodesController {
   // ...
   public create(req: Request, res: Response) {
-    const params: NodeInterface = req.body;
+    const params: NodeInterface = req.body
 
     Node.create<Node>(params)
       .then((node: Node) => res.status(201).json(node))
-      .catch((err: Error) => res.status(500).json(err));
+      .catch((err: Error) => res.status(500).json(err))
   }
 }
 ```
@@ -301,7 +299,7 @@ export class Routes {
     app
       .route("/nodes")
       .get(this.nodesController.index)
-      .post(this.nodesController.create);
+      .post(this.nodesController.create)
   }
 }
 ```
@@ -320,32 +318,11 @@ $ curl -X POST http://localhost:3000/nodes/
 {"name":"SequelizeValidationError","errors":[{"message":"Node.name cannot be null","type":"notNull Violation",...]}
 ```
 
+Perfect. We can now continue.
+
 ### Show
 
-This is
-
-```ts
-// lib/controllers/nodes.controller.ts
-// ...
-export class NodesController {
-  // ...
-  public show(req: Request, res: Response) {
-    const nodeId: number = req.params.id;
-
-    Node.findByPk<Node>(nodeId)
-      .then((node: Node | null) => {
-        if (node) {
-          res.json(node);
-        } else {
-          res.status(404).json({ errors: ["Node not found"] });
-        }
-      })
-      .catch((err: Error) => res.status(500).json(err));
-  }
-}
-```
-
-And setup route:
+The show method have a little difference because we need an `id` as GET parameter. This means we should have an URL like this: `/nodes/1`. It's simple to make this when you build the route. There the implementation.
 
 ```ts
 // lib/config/routes.ts
@@ -354,12 +331,35 @@ export class Routes {
   // ...
   public routes(app): void {
     // ...
-    app.route("/nodes/:id").get(this.nodesController.show);
+    app.route("/nodes/:id").get(this.nodesController.show)
   }
 }
 ```
 
-Let's try it:
+Now we can get the `id` parameter using `req.params.id`. THen we simply use `Node.findByPk` method and handle when this Promise get a `null` value which mean the node was not found. In this case, we return a 404 response:
+
+```ts
+// lib/controllers/nodes.controller.ts
+// ...
+export class NodesController {
+  // ...
+  public show(req: Request, res: Response) {
+    const nodeId: number = req.params.id
+
+    Node.findByPk<Node>(nodeId)
+      .then((node: Node | null) => {
+        if (node) {
+          res.json(node)
+        } else {
+          res.status(404).json({ errors: ["Node not found"] })
+        }
+      })
+      .catch((err: Error) => res.status(500).json(err))
+  }
+}
+```
+
+Now it should be alright. Let's try it:
 
 ```bash
 $ curl -X POST http://localhost:3000/nodes/1
@@ -370,76 +370,7 @@ $ curl -X POST http://localhost:3000/nodes/99
 
 ### Update
 
-```ts
-// lib/controllers/nodes.controller.ts
-import { UpdateOptions } from "sequelize";
-// ...
-export class NodesController {
-  // ...
-  public update(req: Request, res: Response) {
-    const nodeId: number = req.params.id;
-    const params: NodeInterface = req.body;
-
-    const update: UpdateOptions = {
-      where: { id: nodeId },
-      limit: 1
-    };
-
-    Node.update(params, update)
-      .then(() => res.status(202).json({ data: "success" }))
-      .catch((err: Error) => res.status(500).json(err));
-  }
-}
-```
-
-And setup route:
-
-```ts
-// lib/config/routes.ts
-// ...
-export class Routes {
-  // ...
-  public routes(app): void {
-    // ...
-    app
-      .route("/nodes/:id")
-      .get(this.nodesController.show)
-      .put(this.nodesController.update);
-  }
-}
-```
-
-Let's try it:
-
-```bash
-$ curl -X PUT --data "name=updated" http://localhost:3000/nodes/1
-{"data":"success"}}
-```
-
-### Destroy
-
-```ts
-// lib/controllers/nodes.controller.ts
-// ...
-import { UpdateOptions, DestroyOptions } from "sequelize";
-
-export class NodesController {
-  // ...
-  public delete(req: Request, res: Response) {
-    const nodeId: number = req.params.id;
-    const options: DestroyOptions = {
-      where: { id: nodeId },
-      limit: 1
-    };
-
-    Node.destroy(options)
-      .then(() => res.status(204).json({ data: "success" }))
-      .catch((err: Error) => res.status(500).json(err));
-  }
-}
-```
-
-And setup route:
+Update method seams like the previous one and need an `id` parameter. Let's build route:
 
 ```ts
 // lib/config/routes.ts
@@ -452,7 +383,85 @@ export class Routes {
       .route("/nodes/:id")
       .get(this.nodesController.show)
       .put(this.nodesController.update)
-      .delete(this.nodesController.delete);
+  }
+}
+```
+
+Now we'll use the `Node.update` method wich take two parameters:
+
+- an `NodeInterface` interface which contains properties to update
+- an `UpdateOptions` interface which conatins the SQL `WHERE` constraint
+
+Then `Node.update` return a `Promise` like many Sequelize methods.
+
+```ts
+// lib/controllers/nodes.controller.ts
+import { UpdateOptions } from "sequelize"
+// ...
+export class NodesController {
+  // ...
+  public update(req: Request, res: Response) {
+    const nodeId: number = req.params.id
+    const params: NodeInterface = req.body
+
+    const update: UpdateOptions = {
+      where: { id: nodeId },
+      limit: 1
+    }
+
+    Node.update(params, update)
+      .then(() => res.status(202).json({ data: "success" }))
+      .catch((err: Error) => res.status(500).json(err))
+  }
+}
+```
+Get it? Let's try it:
+
+```bash
+$ curl -X PUT --data "name=updated" http://localhost:3000/nodes/1
+{"data":"success"}}
+```
+Beautiful. Let's continue.
+
+### Destroy
+
+Destroy method seams like the previous one and need an `id` parameter. Let's build route:
+
+```ts
+// lib/config/routes.ts
+// ...
+export class Routes {
+  // ...
+  public routes(app): void {
+    // ...
+    app
+      .route("/nodes/:id")
+      .get(this.nodesController.show)
+      .put(this.nodesController.update)
+      .delete(this.nodesController.delete)
+  }
+}
+```
+
+For `destroy` method we call `Node.destroy` we take a `DestroyOptions` interface like `Node.update`.
+
+```ts
+// lib/controllers/nodes.controller.ts
+// ...
+import { UpdateOptions, DestroyOptions } from "sequelize"
+
+export class NodesController {
+  // ...
+  public delete(req: Request, res: Response) {
+    const nodeId: number = req.params.id
+    const options: DestroyOptions = {
+      where: { id: nodeId },
+      limit: 1
+    }
+
+    Node.destroy(options)
+      .then(() => res.status(204).json({ data: "success" }))
+      .catch((err: Error) => res.status(500).json(err))
   }
 }
 ```
@@ -462,6 +471,7 @@ Let's try it:
 ```bash
 $ curl -X DELETE  http://localhost:3000/nodes/1
 ```
+Perfect!
 
 ## Create the Link relationship
 
