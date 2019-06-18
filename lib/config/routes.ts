@@ -1,18 +1,15 @@
 // lib/config/routes.ts
-import { Request, Response } from "express";
 import { NodesController } from "../controllers/nodes.controller";
 import { LinksController } from "../controllers/links.controller";
+import { BuildController } from "../controllers/build.controller";
 
 export class Routes {
   public nodesController: NodesController = new NodesController();
   public linksController: LinksController = new LinksController();
+  public buildController: BuildController = new BuildController();
 
   public routes(app): void {
-    app.route("/").get((req: Request, res: Response) => {
-      res.status(200).send({
-        message: "Welcome to Workflow.ts"
-      });
-    });
+    app.route("/").get(this.buildController.mermaid);
 
     // nodes
 

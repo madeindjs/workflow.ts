@@ -1,7 +1,7 @@
 // lib/models/node.model.ts
 import { Model, DataTypes } from "sequelize";
 import { database } from "../config/database";
-import { Node } from "./node.model";
+// import { Node } from "./node.model";
 
 export class Link extends Model {
   public id!: number;
@@ -35,6 +35,7 @@ Link.init(
     }
   },
   {
+    // underscored: true,
     tableName: "links",
     sequelize: database // this bit is important
   }

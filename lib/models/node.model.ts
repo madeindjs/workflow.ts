@@ -28,6 +28,7 @@ Node.init(
     }
   },
   {
+    // underscored: true,
     tableName: "nodes",
     sequelize: database // this bit is important
   }

@@ -686,8 +686,19 @@ $ curl -X POST --data "fromId=1" --data "toId=2"  http://localhost:3000/links
 {"id":1,"fromId":"1","toId":"2","updatedAt":"2019-06-18T11:22:10.439Z","createdAt":"2019-06-18T11:22:10.439Z"}
 ```
 
-Perfect:
+Perfect!
 
+## Draw the graph
+
+```bash
+$ curl -X POST --data "name=first"  http://localhost:3000/nodes &&
+  curl -X POST --data "name=second"  http://localhost:3000/nodes &&
+  curl -X POST --data "name=third"  http://localhost:3000/nodes &&
+  curl -X POST --data "fromId=1" --data "toId=2"  http://localhost:3000/links &&
+  curl -X POST --data "fromId=2" --data "toId=3"  http://localhost:3000/links
+```
+
+[mermaid] https://github.com/knsv/mermaid
 [typescript] https://www.typescriptlang.org/)
 [es6] https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015
 [orm] https://en.wikipedia.org/wiki/Object-relational_mapping
