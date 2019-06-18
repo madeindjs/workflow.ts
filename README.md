@@ -85,7 +85,7 @@ class App {
 export default new App().app;
 ```
 
-As you may notice, we load routes to defines controllers and routes to respect MVC patern:
+As you may notice, we load routes to defines controllers and routes to respect MVC pattern:
 
 ```typescript
 // lib/controllers/nodes.controller.ts
@@ -135,7 +135,7 @@ $ curl http://localhost:3000/nodes
 
 ## Setup sequelize
 
-Sequelize is an [ORM (Object Relational Mapping)][orm] wich is in charge to translate TypeScript object in SQL queries to save models. The [sequelize documentation about TypeScrypt](http://docs.sequelizejs.com/manual/typescript) is really complete but don't panick I'll show you how to implement with Express.
+Sequelize is an [ORM (Object Relational Mapping)][orm] which is in charge to translate TypeScript object in SQL queries to save models. The [sequelize documentation about TypeScrypt](http://docs.sequelizejs.com/manual/typescript) is really complete but don't panics I'll show you how to implement with Express.
 
 We start to add librairies:
 
@@ -146,7 +146,7 @@ $ npm install --save-dev @types/bluebird @types/validator @types/sequelize
 
 > You may notice I choose SQLite database because of simplicity but you can use MySQL or Postgres
 
-Then we will create a _lib/config/database.ts_ file to setup Sequelize databse system. For simplicity, I create a Sqlite database in memory:
+Then we will create a _lib/config/database.ts_ file to setup Sequelize database system. For simplicity, I create a Sqlite database in memory:
 
 ```ts
 // lib/config/database.ts
@@ -159,7 +159,7 @@ export const database = new Sequelize({
 });
 ```
 
-Then we'll be able to create a **model**. We'll begin with **Node** model who extends Seqelize `Model` class:
+Then we'll be able to create a **model**. We'll begin with **Node** model who extends Sequelize `Model` class:
 
 ```ts
 // lib/models/node.model.ts
@@ -258,7 +258,7 @@ It's seem to work but we have not data in SQlite database yet. Let's continue to
 
 ### Create
 
-We'll first define an **interface** wich define properties we should receive from POST query. We only want to receive `name` property as `String`. We'll use this interface to cast `req.body` object properties. This will prevent user to inject a parameters who we not want to save in database. This is a good practice.
+We'll first define an **interface** which define properties we should receive from POST query. We only want to receive `name` property as `String`. We'll use this interface to cast `req.body` object properties. This will prevent user to inject a parameters who we not want to save in database. This is a good practice.
 
 ```ts
 // lib/models/node.model.ts
@@ -387,10 +387,10 @@ export class Routes {
 }
 ```
 
-Now we'll use the `Node.update` method wich take two parameters:
+Now we'll use the `Node.update` method which take two parameters:
 
 - an `NodeInterface` interface which contains properties to update
-- an `UpdateOptions` interface which conatins the SQL `WHERE` constraint
+- an `UpdateOptions` interface which contains the SQL `WHERE` constraint
 
 Then `Node.update` return a `Promise` like many Sequelize methods.
 
@@ -686,9 +686,83 @@ $ curl -X POST --data "fromId=1" --data "toId=2"  http://localhost:3000/links
 {"id":1,"fromId":"1","toId":"2","updatedAt":"2019-06-18T11:22:10.439Z","createdAt":"2019-06-18T11:22:10.439Z"}
 ```
 
-Perfect!
+Perfect! Sequelize allow you to do many things so I suggest you to take a look at [their documentation](http://docs.sequelizejs.com/manual/associations.html).
 
 ## Draw the graph
+
+Now we'll use our model to draw a graph. To do that, using [Mermaid.js][mermaid] who generate beautiful graph from plan text definitions. A valid definition look something like this:
+
+```mermaid
+graph TD;
+
+1[first node];
+2[second node];
+3[third node];
+
+1 --> 2;
+2 --> 3
+```
+
+It's really simple. Let's do create a new route linked to a new
+
+```ts
+// lib/config/routes.ts
+// ...
+import { GraphController } from "../controllers/graph.controller";
+
+export class Routes {
+  public nodesController: NodesController = new NodesController();
+  public linksController: LinksController = new LinksController();
+  public graphController: GraphController = new GraphController();
+
+  public routes(app): void {
+    app.route("/").get(this.graphController.mermaid);
+    // ...
+  }
+}
+```
+
+Then I use sequelize to get all nodes and all links to draw the graph. I move all code into a _big_ **Promise** to improve readability of error handling. This is a simple implementation so you may want to improve it but it's sufficient in my case.
+
+```ts
+// lib/controllers/build.controller.ts
+import { Request, Response } from "express";
+import { Link } from "../models/link.model";
+import { Node } from "../models/node.model";
+
+export class GraphController {
+  public mermaid(_req: Request, res: Response) {
+    // we'll englobe all logic into a big promise
+    const getMermaid = new Promise<string>((resolve, reject) => {
+      let graphDefinition = "graph TD;\r\n";
+
+      Node.findAll({})
+        // get all nodes and build mermaid definitions like this `1[The first node]`
+        .then((nodes: Array<Node>) => {
+          nodes.forEach((node: Node) => {
+            graphDefinition += `${node.id}[${node.name}];\r\n`;
+          });
+        })
+        // get all links
+        .then(() => Link.findAll())
+        // build all link in mermaid
+        .then((links: Array<Link>) => {
+          links.forEach((link: Link) => {
+            graphDefinition += `${link.fromId} --> ${link.toId};\r\n`;
+          });
+
+          resolve(graphDefinition);
+        })
+        .catch((err: Error) => reject(err));
+    });
+
+    // call promise and return plain text
+    getMermaid
+      .then((graph: string) => res.send(graph))
+      .catch((err: Error) => res.status(500).json(err));
+  }
+}
+```
 
 ```bash
 $ curl -X POST --data "name=first"  http://localhost:3000/nodes &&
@@ -696,10 +770,33 @@ $ curl -X POST --data "name=first"  http://localhost:3000/nodes &&
   curl -X POST --data "name=third"  http://localhost:3000/nodes &&
   curl -X POST --data "fromId=1" --data "toId=2"  http://localhost:3000/links &&
   curl -X POST --data "fromId=2" --data "toId=3"  http://localhost:3000/links
+~~~
+
+And try the result output:
+
+~~~bash
+$ curl http://localhost:3000
+graph TD;
+1[first];
+2[second];
+3[third];
+1 --> 2;
+2 --> 3;
 ```
 
+Beautiful!
+
+## Go further
+
+We just build foundations of a workflow system. We can easily con further. Here some ideas:
+
+- add a names to links
+- add a names to links
+- add a `Graph` object who own some nodes
+- add an authentification using JWT token
+
 [mermaid] https://github.com/knsv/mermaid
-[typescript] https://www.typescriptlang.org/)
+[typescript] https://www.typescriptlang.org/
 [es6] https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015
 [orm] https://en.wikipedia.org/wiki/Object-relational_mapping
 [rest] https://en.wikipedia.org/wiki/Representational_state_transfer

@@ -1,12 +1,12 @@
 // lib/config/routes.ts
 import { NodesController } from "../controllers/nodes.controller";
 import { LinksController } from "../controllers/links.controller";
-import { BuildController } from "../controllers/build.controller";
+import { GraphController } from "../controllers/graph.controller";
 
 export class Routes {
   public nodesController: NodesController = new NodesController();
   public linksController: LinksController = new LinksController();
-  public buildController: BuildController = new BuildController();
+  public buildController: GraphController = new GraphController();
 
   public routes(app): void {
     app.route("/").get(this.buildController.mermaid);
