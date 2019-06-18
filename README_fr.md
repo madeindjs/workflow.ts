@@ -1,17 +1,17 @@
 # Workflow.ts
 
-The purpose of this article is to discover an implementation of an[API][api][RESTfull][rest] using[TypeScript][typescript].
+Le but de cet article est de découvrir une mise en place d'une [API][api] [RESTfull][rest] en utilisant [TypeScript][typescript].
 
-> TypeScript is a free and open source programming language developed by Microsoft to improve and secure the production of JavaScript code. (...) . The TypeScript code is transcompiled into JavaScript, which can be interpreted by any web browser or JavaScript engine. (...) TypeScript allows optional static typing of variables and functions, creation of classes and interfaces, import of modules, while maintaining the non-binding approach of JavaScript. [Wikipedia - TypeScript](https://fr.wikipedia.org/wiki/TypeScript)
+> TypeScript est un langage de programmation libre et open source développé par Microsoft qui a pour but d'améliorer et de sécuriser la production de code JavaScript. (...) . Le code TypeScript est transcompilé en JavaScript, pouvant ainsi être interprété par n'importe quel navigateur web ou moteur JavaScript. (...) TypeScript permet un typage statique optionnel des variables et des fonctions, la création de classes et d'interfaces, l'import de modules, tout en conservant l'approche non-contraignante de JavaScript. [Wikipedia - TypeScript](https://fr.wikipedia.org/wiki/TypeScript)
 
-We will therefore set up a very basic _Workflow_ system. We will create two models:
+Nous allons donc mettre en place un système de _Workflow_ très basique. Nous allons créer deux modèles:
 
-- a **node** (node) which represents a simple step. It just contains a `name' and an`id'.
-- a **link** (link) that connects only two nodes with attributes `from_id' and`to_id'.
+- un **node** (nœud) qui représente une étape simple. Elle contient juste un `nom' et un`id'.
+- un **link** (lien) qui ne connecte que deux nœuds avec des attributs `from_id' et`to_id'.
 
-It's as simple as that.
+C'est aussi simple que ça.
 
-To build the API, I will use[Express.js], a minimalist framework that allows us to make APIs in JavaScript. At the end of the article, the API will be able to generate a definition of a [Mermaid][mermaid] graph which allows to convert the workflow into a beautiful graph like the one below:
+Pour construire l'API, j'utiliserai [Express.js], un framework minimaliste qui nous permet de faire des API en JavaScript. A la fin de l'article, l'API pourra générer un définition d'un graphe [Mermaid][mermaid] qui permet ainsi de convertir le workflow en un beau graphique comme celui ci-dessous:
 
 ![Mermaid example](http://rich-iannone.github.io/DiagrammeR/img/mermaid_1.png)
 
@@ -19,7 +19,7 @@ _Let's go_!
 
 ## Setup project
 
-Let's create a brand new project using [NPM](https://www.npmjs.com/) and [Git versionning](https://git-scm.com/).
+Commençons donc par créer un nouveau projet avec [NPM](https://www.npmjs.com/) et [Git](https://git-scm.com/).
 
 ```bash
 $ mkdir workflow.ts
@@ -28,14 +28,14 @@ $ npm init
 $ git init
 ```
 
-Then we start to install somes dependencies to build the HTTP server:
+Ensuite nous allons installer quelques dépendances avec NPM pour construire le serveur HTTP:
 
 ```bash
 $ npm install --save express body-parser
 $ npm install --save-dev typescript ts-node @types/express @types/node
 ```
 
-As we use [TypeScript][typescript] we need to create a `tsconfig.json` to indicate how transcript TypeScript files from `lib` to `dist` folder. Also we transpile to [ES6][es6] version:
+Comme nous utilisons [TypeScript][typescript], nous avons besoin de créer un fichier `tsconfig.json` pour indiquer à TypeScript que les fichiers seront transpilés depuis `lib` vers le dossier `dist`. Nous précision aussi que nous utiliserons la syntaxe [ES6][es6]:
 
 ```json
 // tsconfig.json
@@ -54,7 +54,7 @@ As we use [TypeScript][typescript] we need to create a `tsconfig.json` to indica
 }
 ```
 
-Now we we'll create the the `lib/app.ts`. This will be in charge to configure, load routes and start Express server:
+Maintenant nous allons créer le `lib/app.ts'. Ce dernier se chargera de la configuration, du chargement des routes et du démarrage du serveur Express:
 
 ```typescript
 // lib/app.ts
@@ -81,7 +81,7 @@ class App {
 export default new App().app;
 ```
 
-As you may notice, we load routes to defines controllers and routes to respect MVC pattern:
+Comme vous pouvez le remarquer, nous chargeons les routes pour définir les contrôleurs et les routes pour respecter le modèle MVC :
 
 ```typescript
 // lib/controllers/nodes.controller.ts
@@ -112,7 +112,7 @@ export class Routes {
 }
 ```
 
-And a `lib/server.ts` file to start `App` object:
+Et un fichier `lib/server.ts' pour lancer l'objet`App' :
 
 ```ts
 // lib/server.ts
@@ -122,12 +122,14 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));
 ```
 
-And that's it. You can start server using `npm run dev` and try API using cURL:
+Et c'est tout. Vous pouvez démarrer le serveur en utilisant `npm run dev` et essayer l'API en utilisant cURL:
 
 ```bash
 $ curl http://localhost:3000/nodes
 {"message":"Hello boi"}
 ```
+
+// CURRENT
 
 ## Setup sequelize
 
