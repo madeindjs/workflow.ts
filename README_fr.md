@@ -1,10 +1,10 @@
-# Workflow.ts
+# graph_api.ts
 
 Le but de cet article est de découvrir une mise en place d'une [API][api] [RESTfull][rest] en utilisant [TypeScript][typescript].
 
 > TypeScript est un langage de programmation libre et open source développé par Microsoft qui a pour but d'améliorer et de sécuriser la production de code JavaScript. (...) . Le code TypeScript est transcompilé en JavaScript, pouvant ainsi être interprété par n'importe quel navigateur web ou moteur JavaScript. (...) TypeScript permet un typage statique optionnel des variables et des fonctions, la création de classes et d'interfaces, l'import de modules, tout en conservant l'approche non-contraignante de JavaScript. [Wikipedia - TypeScript](https://fr.wikipedia.org/wiki/TypeScript)
 
-Nous allons donc mettre en place un système de _Workflow_ très basique. Nous allons créer deux modèles:
+Nous allons donc mettre en place un système de _graph_api_ très basique. Nous allons créer deux modèles:
 
 - un **node** (nœud) qui représente une étape simple. Elle contient juste un `nom' et un`id'.
 - un **link** (lien) qui ne connecte que deux nœuds avec des attributs `from_id' et`to_id'.
@@ -13,13 +13,13 @@ C'est aussi simple que ça.
 
 Pour construire l'API, j'utiliserai [Express.js], un framework minimaliste qui nous permet de faire des API en JavaScript. J'utiliserai aussi
 
-A la fin de l'article, l'API pourra générer un définition d'un graphe [Mermaid][mermaid] qui permet ainsi de convertir le workflow en un beau graphique comme celui ci-dessous:
+A la fin de l'article, l'API pourra générer un définition d'un graphe [Mermaid][mermaid] qui permet ainsi de convertir le graph_api en un beau graphique comme celui ci-dessous:
 
 ![Mermaid example](http://rich-iannone.github.io/DiagrammeR/img/mermaid_1.png)
 
 _Let's go_!
 
-> NOTE: je vais aller un peu vite car c'est un peu un aide-mémoire pour moi-même
+> NOTE: je vais aller un peu vite car c'est un peu un aide-mémoire pour moi-même. Tout le code est disponible sur le [_repository_ Github `graph_api.ts`][github_repo]
 
 > TL;DR: La grand liberté d'Express nous permet de décider nous même de l'architecture de notre application et TypeScript nous donne la possibilité de créer de vrais _design paterns_.
 
@@ -28,8 +28,8 @@ _Let's go_!
 Commençons donc par créer un nouveau projet avec [NPM](https://www.npmjs.com/) et [Git](https://git-scm.com/).
 
 ```bash
-$ mkdir workflow.ts
-$ cd workflow.ts/
+$ mkdir graph_api.ts
+$ cd graph_api.ts/
 $ npm init
 $ git init
 ```
@@ -834,3 +834,4 @@ Comme vous pouvez le voir, ExpressJS est une boîte à outil qui s'interface tr�
 [express]: https://expressjs.com/
 [sequelize]: http://docs.sequelizejs.com
 [mocha]: https://mochajs.org/
+[github_repo]: https://github.com/madeindjs/graph_api.ts

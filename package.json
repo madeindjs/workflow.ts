@@ -1,13 +1,16 @@
 {
-  "name": "workflow.ts",
+  "name": "graph_api.ts",
   "version": "1.0.0",
-  "description": "The goal is build a workflow application using [TypeScript](https://www.typescriptlang.org/) and [Express.js](https://expressjs.com/).",
+  "description": "The goal is build a graph_api application using [TypeScript](https://www.typescriptlang.org/) and [Express.js](https://expressjs.com/).",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
     "dev": "ts-node ./lib/server.ts",
     "start": "nodemon ./dist/server.js",
     "prod": "npm run build && npm run start"
+  },
+  "repository": {
+    "url": "https://github.com/madeindjs/graph_api.ts"
   },
   "author": "",
   "license": "ISC",

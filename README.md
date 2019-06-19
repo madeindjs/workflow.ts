@@ -1,17 +1,17 @@
-# Workflow.ts
+# graph_api.ts
 
 The purpose of this article is to discover an implementation of an[API][api][RESTfull][rest] using[TypeScript][typescript].
 
 > TypeScript is a free and open source programming language developed by Microsoft to improve and secure the production of JavaScript code. (...) . The TypeScript code is transcompiled into JavaScript, which can be interpreted by any web browser or JavaScript engine. (...) TypeScript allows optional static typing of variables and functions, creation of classes and interfaces, import of modules, while maintaining the non-binding approach of JavaScript. [Wikipedia - TypeScript](https://fr.wikipedia.org/wiki/TypeScript)
 
-We will therefore set up a very basic _Workflow_ system. We will create two models:
+We will therefore set up a very basic _graph_api_ system. We will create two models:
 
 - a **node** (node) which represents a simple step. It just contains a `name' and an`id'.
 - a **link** (link) that connects only two nodes with attributes `from_id' and`to_id'.
 
 It's as simple as that.
 
-To build the API, I will use[Express.js], a minimalist framework that allows us to make APIs in JavaScript. At the end of the article, the API will be able to generate a definition of a [Mermaid][mermaid] graph which allows to convert the workflow into a beautiful graph like the one below:
+To build the API, I will use[Express.js], a minimalist framework that allows us to make APIs in JavaScript. At the end of the article, the API will be able to generate a definition of a [Mermaid][mermaid] graph which allows to convert the graph_api into a beautiful graph like the one below:
 
 ![Mermaid example](http://rich-iannone.github.io/DiagrammeR/img/mermaid_1.png)
 
@@ -22,8 +22,8 @@ _Let's go_!
 Let's create a brand new project using [NPM](https://www.npmjs.com/) and [Git versionning](https://git-scm.com/).
 
 ```bash
-$ mkdir workflow.ts
-$ cd workflow.ts/
+$ mkdir graph_api.ts
+$ cd graph_api.ts/
 $ npm init
 $ git init
 ```
@@ -784,7 +784,7 @@ Beautiful!
 
 ## Go further
 
-We just build foundations of a workflow system. We can easily con further. Here some ideas:
+We just build foundations of a graph_api system. We can easily con further. Here some ideas:
 
 - build unit test
 - add a names to links
