@@ -2,7 +2,7 @@
 
 The purpose of this article is to discover an implementation of an[API][api][RESTfull][rest] using[TypeScript][typescript].
 
-> TypeScript is a free and open source programming language developed by Microsoft to improve and secure the production of JavaScript code. (...) . The TypeScript code is transcompiled into JavaScript, which can be interpreted by any web browser or JavaScript engine. (...) TypeScript allows optional static typing of variables and functions, creation of classes and interfaces, import of modules, while maintaining the non-binding approach of JavaScript. [Wikipedia - TypeScript](https://fr.wikipedia.org/wiki/TypeScript)
+> TypeScript is a free and open source programming language developed by Microsoft to improve and secure the production of JavaScript code. (...) . The TypeScript code is transcompiled into JavaScript (...) TypeScript allows optional static typing of variables and functions (...) while maintaining the non-binding approach of JavaScript. [Wikipedia - TypeScript](https://fr.wikipedia.org/wiki/TypeScript)
 
 We will therefore set up a very basic _graph_api_ system. We will create two models:
 
@@ -16,6 +16,10 @@ To build the API, I will use[Express.js], a minimalist framework that allows us 
 ![Mermaid example](http://rich-iannone.github.io/DiagrammeR/img/mermaid_1.png)
 
 _Let's go_!
+
+> NOTE: I'm going to go a little fast because it's a bit of a reminder for myself. All the code is available on the [_repository_ Github `graph_api.ts`][github_repo]
+
+> TL;DR: Express great freedom allows us to decide for ourselves the architecture of our application and TypeScript gives us the possibility to create real _design paterns_.
 
 ## Setup project
 
@@ -81,7 +85,7 @@ class App {
 export default new App().app;
 ```
 
-As you may notice, we load routes to defines controllers and routes to respect MVC pattern:
+As you can see, we load the routes to define the controllers and the routes to comply with the MVC model. Here is the first `NodesController` which will handle actions related to _nodes_ with an action `index:`
 
 ```typescript
 // lib/controllers/nodes.controller.ts
@@ -95,6 +99,8 @@ export class NodesController {
   }
 }
 ```
+
+We will now separate the routes into a separate file:
 
 ```typescript
 // lib/config/routes.ts
@@ -163,16 +169,17 @@ import { Sequelize, Model, DataTypes, BuildOptions } from "sequelize";
 import { database } from "../config/database";
 
 export class Node extends Model {
-  public id!: number; // Note that the `null assertion` `!` is required in strict mode.
+  public id!: number;
   public name!: string;
-  // timestamps!
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 // ...
 ```
 
-Then we setup the table SQL schema and call `Node.sync`. This will create table in Sqlite database.
+You can notice that I added two fields `createdAt` and `updatedAt` that[Sequelize][sequelize] will fill automatically.
+
+Then, we configure the SQL schema of the table and call `Node.sync`. This will create a table in the Sqlite database.
 
 ```ts
 // lib/models/node.model.ts
@@ -474,10 +481,10 @@ Perfect!
 
 ## Create the Link relationship
 
-Now we want to create the second model: the `link`. The link have two attributes:
+Now we want to create the second model: the link. It has two attributes:
 
-- `from_id`
-- `to_id`
+- `from_id` which will be a link on the previous node
+- `to_id` which will be a link on the next node
 
 ### Setup CRUD
 
@@ -718,7 +725,9 @@ export class Routes {
 }
 ```
 
-Then I use sequelize to get all nodes and all links to draw the graph. I move all code into a _big_ **Promise** to improve readability of error handling. This is a simple implementation so you may want to improve it but it's sufficient in my case.
+Then use Sequelize to get all the nodes and links to draw the graph.
+
+I move all the code into a **Promise** to improve readability and error handling. It's a simple implementation so you might want to improve it (and you'd be right) but it's enough in my case.
 
 ```ts
 // lib/controllers/build.controller.ts
@@ -792,10 +801,21 @@ We just build foundations of a graph_api system. We can easily con further. Here
 - add a `Graph` object who own some nodes
 - add an authentification using JWT token
 
-[mermaid] https://github.com/knsv/mermaid
-[typescript] https://www.typescriptlang.org/
-[es6] https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015
-[orm] https://en.wikipedia.org/wiki/Object-relational_mapping
-[rest] https://en.wikipedia.org/wiki/Representational_state_transfer
-[api] https://en.wikipedia.org/wiki/Application_programming_interface
-[express] https://expressjs.com/
+As you can see, ExpressJS is a toolbox that interfaces very well with TypeScript. Express' great freedom allows us to decide for ourselves the architecture of our application and TypeScript gives us the possibility to create real _design paterns_.
+
+## Liens
+
+- https://glebbahmutov.com/blog/how-to-correctly-unit-test-express-server/
+- https://www.techighness.com/post/unit-testing-expressjs-controller-part-1/
+- https://blog.logrocket.com/a-quick-and-complete-guide-to-mocha-testing-d0e0ea09f09d/
+
+[mermaid]: https://github.com/knsv/mermaid
+[typescript]: https://www.typescriptlang.org/
+[es6]: https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015
+[orm]: https://en.wikipedia.org/wiki/Object-relational_mapping
+[rest]: https://en.wikipedia.org/wiki/Representational_state_transfer
+[api]: https://en.wikipedia.org/wiki/Application_programming_interface
+[express]: https://expressjs.com/
+[sequelize]: http://docs.sequelizejs.com
+[mocha]: https://mochajs.org/
+[github_repo]: https://github.com/madeindjs/graph_api.ts

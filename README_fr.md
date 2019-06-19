@@ -2,7 +2,7 @@
 
 Le but de cet article est de découvrir une mise en place d'une [API][api] [RESTfull][rest] en utilisant [TypeScript][typescript].
 
-> TypeScript est un langage de programmation libre et open source développé par Microsoft qui a pour but d'améliorer et de sécuriser la production de code JavaScript. (...) . Le code TypeScript est transcompilé en JavaScript, pouvant ainsi être interprété par n'importe quel navigateur web ou moteur JavaScript. (...) TypeScript permet un typage statique optionnel des variables et des fonctions, la création de classes et d'interfaces, l'import de modules, tout en conservant l'approche non-contraignante de JavaScript. [Wikipedia - TypeScript](https://fr.wikipedia.org/wiki/TypeScript)
+> TypeScript est un langage de programmation libre et open source développé par Microsoft qui a pour but (...) de sécuriser la production de code JavaScript. (...) . Le code TypeScript est transcompilé en JavaScript (...) et permet un typage statique optionnel des variables et des fonctions, la création de classes et d'interfaces, l'import de modules, tout en conservant l'approche non-contraignante de JavaScript. [Wikipedia - TypeScript](https://fr.wikipedia.org/wiki/TypeScript)
 
 Nous allons donc mettre en place un système de _graph_api_ très basique. Nous allons créer deux modèles:
 
@@ -60,7 +60,7 @@ Comme nous utilisons [TypeScript][typescript], nous avons besoin de créer un fi
 }
 ```
 
-Maintenant nous allons créer le `lib/app.ts'. Ce dernier se chargera de la configuration, du chargement des routes et du démarrage du serveur Express:
+Maintenant nous allons créer le `lib/app.ts`. Ce dernier se chargera de la configuration, du chargement des routes et du démarrage du serveur Express:
 
 ```typescript
 // lib/app.ts
@@ -122,7 +122,7 @@ export class Routes {
 
 Maintenant nous pouvons charger l'application et la démarrer dans un fichier `server.ts`:
 
-Et un fichier `lib/server.ts' pour lancer l'objet`App' :
+Et un fichier `lib/server.ts` pour lancer l'objet `App`:
 
 ```ts
 // lib/server.ts
@@ -143,7 +143,7 @@ Jusqu'ici tout fonctionne.
 
 ## Setup sequelize
 
-[Sequelize][sequelize] est un[ORM (Object Relational Mapping)][orm] qui est chargé de traduire l'objet TypeScript dans les requêtes SQL pour enregistrer les modèles. La documentation de TypeScrypt (http://docs.sequelizejs.com/manual/typescript) est vraiment complète mais ne paniquez pas, je vais vous montrer comment l'implémenter avec Express.
+[Sequelize][sequelize] est un[ORM (Object Relational Mapping)][orm] qui est chargé de traduire l'objet TypeScript dans les requêtes SQL pour enregistrer les modèles. La documentation de TypeScript (http://docs.sequelizejs.com/manual/typescript) est vraiment complète mais ne paniquez pas, je vais vous montrer comment l'implémenter avec Express.
 
 Nous commençons à ajouter des bibliothèques:
 
@@ -167,7 +167,7 @@ export const database = new Sequelize({
 });
 ```
 
-Ensuite, nous pourrons créer un **modèle**. Nous commencerons par le modèle **Node** qui étend la classe Sequelize `Model' :
+Ensuite, nous pourrons créer un **modèle**. Nous commencerons par le modèle **Node** qui étend la classe Sequelize `Model` :
 
 ```ts
 // lib/models/node.model.ts
@@ -267,7 +267,7 @@ Cela semble fonctionner mais nous n'avons pas encore de données dans la base de
 
 ### Create
 
-Nous allons d'abord définir une **interface** qui définit les propriétés que nous devrions recevoir de la requête POST. Nous voulons seulement recevoir la propriété `name` comme `String`. Nous utiliserons cette interface pour définir les propriétés de l'objet`req.body'. Ceci empêchera l'utilisateur d'injecter un paramètre que nous ne voulons pas enregistrer dans la base de données. C'est une bonne pratique.
+Nous allons d'abord définir une **interface** qui définit les propriétés que nous devrions recevoir de la requête POST. Nous voulons seulement recevoir la propriété `name` comme `String`. Nous utiliserons cette interface pour définir les propriétés de l'objet `req.body`. Ceci empêchera l'utilisateur d'injecter un paramètre que nous ne voulons pas enregistrer dans la base de données. C'est une bonne pratique.
 
 ```ts
 // lib/models/node.model.ts
@@ -277,7 +277,7 @@ export interface NodeInterface {
 }
 ```
 
-Maintenant, revenons au contrôleur. Nous appelons simplement la méthode `Node.create` et passons en paramètres `req.body'. Ensuite, nous utiliserons un **Promesse** pour traiter certaines erreurs:
+Maintenant, revenons au contrôleur. Nous appelons simplement la méthode `Node.create` et passons en paramètres `req.body`. Ensuite, nous utiliserons un **Promesse** pour traiter certaines erreurs:
 
 ```ts
 // lib/controllers/nodes.controller.ts
@@ -498,7 +498,6 @@ Maintenant, nous voulons créer le deuxième modèle : le `link`. Il possède de
 
 ### Mise en place des actions CRUD
 
-I will be quick on basic CRUD link implementation because this is the same than nodes CRUD:
 Je vais être plus rapide sur la mise en œuvre des actions CRUD de base puisque c'est la même logique que les nœuds:
 
 Le modèle:
