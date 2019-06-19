@@ -786,6 +786,7 @@ Beautiful!
 
 We just build foundations of a workflow system. We can easily con further. Here some ideas:
 
+- build unit test
 - add a names to links
 - add a names to links
 - add a `Graph` object who own some nodes
